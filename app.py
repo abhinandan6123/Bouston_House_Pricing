@@ -22,17 +22,32 @@ def predict():
         location = float(request.form.get("location", 0))
         parking = float(request.form.get("parking", 0))
 
-        # Always create EXACT 2D array
-        features = np.array([
-            bedrooms,
-            kitchens,
-            bathrooms,
-            area / 1000,
-            furnished,
-            location,
-            parking,
-            1.0
-        ]).reshape(1, -1)
+ features = np.array([
+    bedrooms,
+    kitchens,
+    bathrooms,
+    area / 1000,
+    furnished,
+    location,
+    parking,
+
+    # Dummy features to satisfy model
+    0, 0, 0, 0, 0, 0
+]).reshape(1, -1)
+
+
+        prediction = model.predict(features)[0]
+
+        return render_template(
+            "index.html",
+            prediction_text=f"Estimated House Price: ₹ {prediction * 100000:.2f}"
+        )
+
+    except Exception as e:
+        return render_template(
+            "index.html",
+            prediction_text=f"Error occurred: {str(e)}"
+        )
 
         prediction = model.predict(features)[0]
 
